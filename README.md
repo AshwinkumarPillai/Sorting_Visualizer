@@ -2,6 +2,8 @@
 
 This project helps visualize how sorting algorithms work.
 
+Website - ash-sorting-visualizer.netlify.app/
+
 ## Features
 
 ### v1.0.0
