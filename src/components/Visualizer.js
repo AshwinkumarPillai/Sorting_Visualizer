@@ -121,7 +121,6 @@ class Visualizer extends Component {
   };
 
   insertionSort = async () => {
-    console.log("hello");
     let arr = this.state.array;
     let n = arr.length;
     let i, j, k;
