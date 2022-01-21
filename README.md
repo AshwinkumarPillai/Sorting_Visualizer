@@ -20,8 +20,8 @@ Website - https://ash-sorting-visualizer.netlify.app/
 
 ### v1.0.1
 
-Added support for Mobile devices
-Ability to see actual number on the individual element (only for laptop and above)
+- Added support for Mobile devices
+- Ability to see actual number on the individual element (only for laptop and above)
 
 ## TODO
 
