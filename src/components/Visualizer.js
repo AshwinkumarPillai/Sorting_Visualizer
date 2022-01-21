@@ -184,7 +184,7 @@ class Visualizer extends Component {
         <nav className="indigo darken-1 navbar">
           <div className="nav-wrapper">
             <span className="nav_heading">Sorting Visualizer</span>
-            <ul className="right hide-on-med-and-down">
+            <ul className="right nav_btn_container">
               <li>
                 <button
                   className="nav_btn btn btn-small black-text text-darken-2 teal lighten-2"
@@ -228,7 +228,7 @@ class Visualizer extends Component {
           <div className="container controls_container_inner">
             <div className="row">
               <div className="col s2">
-                <label className="controls_label">Number of elements</label>
+                <label className="controls_label">Number</label>
               </div>
               <div className="col s10">
                 <input

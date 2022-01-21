@@ -31,6 +31,10 @@
   margin-left: 20px;
 }
 
+/* .nav_btn_container {
+  border: 1px solid red;
+} */
+
 .nav_btn {
   transform: scale(0.9);
 }
@@ -69,4 +73,35 @@
   padding: 20px;
   padding-top: 0px;
   transition: 0.3s;
+}
+
+@media only screen and (max-width: 1200px) {
+  .arr_bars {
+    height: 80vh;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  .navbar {
+    line-height: 40px;
+  }
+
+  .nav_heading {
+    font-size: 14px;
+  }
+  .nav_btn {
+    font-size: 10px;
+  }
+
+  .arr_bars {
+    height: 80vh;
+  }
+
+  .controls_container {
+    padding-bottom: 0;
+  }
+
+  /* .nav_btn_container {
+    border: 1px solid red;
+  } */
 }
