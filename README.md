@@ -20,6 +20,17 @@ Website - https://ash-sorting-visualizer.netlify.app/
 2. Selection Sort
 3. Insertion Sort
 
+## Updates
+
+### v1.0.0
+
+Basic App with 3 algos
+
+### v1.0.1
+
+Added support for Mobile devices
+Ability to see actual number on the individual element (only for laptop and above)
+
 ## TODO
 
 - Quick Sort

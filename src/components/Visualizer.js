@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "../css/visualizer.css";
-// import bubbleSort from "./bubbleSort";
+import { isMobile } from "react-device-detect";
 
 class Visualizer extends Component {
   constructor(props) {
@@ -15,6 +15,8 @@ class Visualizer extends Component {
       successColor: "#6ab04c",
       visSpeed: 100,
       containerColor: "white",
+      selectedAlgo: "none",
+      showNumbers: false,
     };
   }
 
@@ -100,7 +102,7 @@ class Visualizer extends Component {
       arr = await this.setColor(arr, minIndex, "black");
       for (j = i + 1; j < n; j++) {
         arr = await this.setColor(arr, j, this.state.secondaryColor);
-
+        await this.setDelay(0);
         if (arr[j].val < arr[minIndex].val) {
           if (minIndex !== i) {
             arr = await this.setColor(arr, minIndex, this.state.primaryColor);
@@ -147,6 +149,23 @@ class Visualizer extends Component {
     await this.setState({ array: arr });
   };
 
+  // merge = async (arr, low, mid, high) => {
+  //   // let leftArr = mid
+  // };
+
+  // mergeSortHelper = async (arr, low, high) => {
+  //   if (low >= high) return;
+  //   let mid = low + (high - low) / 2;
+  //   await this.mergeSortHelper(arr, low, mid);
+  //   await this.mergeSortHelper(arr, mid + 1, high);
+  //   await this.merge(arr, low, mid, high);
+  // };
+
+  // mergeSort = async () => {
+  //   let arr = this.state.array;
+  //   let n = arr.length;
+  // };
+
   endAlgo = async () => {
     await this.setState({ disableButtons: false, containerColor: "black" });
     await this.setDelay(300);
@@ -154,6 +173,9 @@ class Visualizer extends Component {
   };
 
   visualizeAlgo = async (algo) => {
+    if (typeof algo === "object") {
+      algo = algo.target.value;
+    }
     await this.setState({ disableButtons: true });
 
     switch (algo) {
@@ -170,12 +192,17 @@ class Visualizer extends Component {
         await this.endAlgo();
         break;
       default:
+        await this.setState({ disableButtons: false });
         break;
     }
   };
 
   changeVisSpeed = (e) => {
     this.setState({ visSpeed: e.target.value });
+  };
+
+  toggleShowNumbers = () => {
+    this.setState({ showNumbers: !this.state.showNumbers });
   };
 
   render() {
@@ -185,48 +212,86 @@ class Visualizer extends Component {
           <div className="nav-wrapper">
             <span className="nav_heading">Sorting Visualizer</span>
             <ul className="right nav_btn_container">
-              <li>
-                <button
-                  className="nav_btn btn btn-small black-text text-darken-2 teal lighten-2"
-                  onClick={this.generateArray}
-                  disabled={this.state.disableButtons}
-                >
-                  Generate New Array
-                </button>
-              </li>
-              <li>
-                <button
-                  className="nav_btn btn btn-small black-text text-darken-2 purple accent-1"
-                  onClick={() => this.visualizeAlgo("bubble")}
-                  disabled={this.state.disableButtons}
-                >
-                  Bubble Sort
-                </button>
-              </li>
-              <li>
-                <button
-                  className="nav_btn btn btn-small black-text text-darken-2 purple accent-1"
-                  onClick={() => this.visualizeAlgo("selection")}
-                  disabled={this.state.disableButtons}
-                >
-                  Selection Sort
-                </button>
-              </li>
-              <li>
-                <button
-                  className="nav_btn btn btn-small black-text text-darken-2 purple accent-1"
-                  onClick={() => this.visualizeAlgo("insertion")}
-                  disabled={this.state.disableButtons}
-                >
-                  Insertion Sort
-                </button>
-              </li>
+              {!isMobile ? (
+                <React.Fragment>
+                  <li>
+                    <button className="nav_btn btn btn-small black-text text-darken-2 teal lighten-2" onClick={this.toggleShowNumbers}>
+                      Show Numbers
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="nav_btn btn btn-small black-text text-darken-2 teal lighten-2"
+                      onClick={this.generateArray}
+                      disabled={this.state.disableButtons}
+                    >
+                      Generate New Array
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="nav_btn btn btn-small black-text text-darken-2 purple accent-1"
+                      onClick={() => this.visualizeAlgo("bubble")}
+                      disabled={this.state.disableButtons}
+                    >
+                      Bubble Sort
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="nav_btn btn btn-small black-text text-darken-2 purple accent-1"
+                      onClick={() => this.visualizeAlgo("selection")}
+                      disabled={this.state.disableButtons}
+                    >
+                      Selection Sort
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="nav_btn btn btn-small black-text text-darken-2 purple accent-1"
+                      onClick={() => this.visualizeAlgo("insertion")}
+                      disabled={this.state.disableButtons}
+                    >
+                      Insertion Sort
+                    </button>
+                  </li>
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <li className="select_container">
+                    <div className="input-field col s12">
+                      <select
+                        onChange={this.visualizeAlgo}
+                        value={this.state.selectedAlgo}
+                        className="browser-default"
+                        disabled={this.state.disableButtons}
+                      >
+                        <option value="none" disabled>
+                          Choose an Algo
+                        </option>
+                        <option value={"bubble"}>Bubble Sort</option>
+                        <option value={"selection"}>Selection Sort</option>
+                        <option value={"insertion"}>Insertion Sort</option>
+                      </select>
+                    </div>
+                  </li>
+                  <li>
+                    <button
+                      className="nav_btn btn btn-small black-text text-darken-2 teal lighten-2"
+                      onClick={this.generateArray}
+                      disabled={this.state.disableButtons}
+                    >
+                      New Array
+                    </button>
+                  </li>
+                </React.Fragment>
+              )}
             </ul>
           </div>
         </nav>
         <div className="container-fluid controls_container">
           <div className="container controls_container_inner">
-            <div className="row">
+            <div className="row controls_row">
               <div className="col s2">
                 <label className="controls_label">Number</label>
               </div>
@@ -294,7 +359,9 @@ class Visualizer extends Component {
                   height: `${obj.val}px`,
                   margin: "1px",
                 }}
-              ></div>
+              >
+                {this.state.showNumbers ? obj.val : null}
+              </div>
             </div>
           ))}
         </div>
