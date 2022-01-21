@@ -12,7 +12,9 @@ class Visualizer extends Component {
       arraySize: 60,
       primaryColor: this.colorSetPrimary[0],
       secondaryColor: this.colorSetSecondary[0],
+      bufferColor: "#642771",
       successColor: "#6ab04c",
+      successBufferColor: "#274e13",
       visSpeed: 100,
       containerColor: "white",
       selectedAlgo: "none",
@@ -149,22 +151,83 @@ class Visualizer extends Component {
     await this.setState({ array: arr });
   };
 
-  // merge = async (arr, low, mid, high) => {
-  //   // let leftArr = mid
-  // };
+  mergeSortColorHelper = async (arr, m, n, l, k) => {
+    await this.setDelay(0);
+    if (m + n === l) arr[k].bgcolor = this.state.successColor;
+    else arr[k].bgcolor = this.state.successBufferColor;
+    await this.setState({ array: arr });
+    return arr;
+  };
 
-  // mergeSortHelper = async (arr, low, high) => {
-  //   if (low >= high) return;
-  //   let mid = low + (high - low) / 2;
-  //   await this.mergeSortHelper(arr, low, mid);
-  //   await this.mergeSortHelper(arr, mid + 1, high);
-  //   await this.merge(arr, low, mid, high);
-  // };
+  merge = async (arr, low, mid, high) => {
+    let l = arr.length,
+      m = mid - low + 1,
+      n = high - mid;
+    let leftArray = new Array(m);
+    let rightArray = new Array(n);
 
-  // mergeSort = async () => {
-  //   let arr = this.state.array;
-  //   let n = arr.length;
-  // };
+    let i, j, k;
+
+    for (i = 0; i < m; i++) {
+      await this.setDelay(0);
+      arr[low + i].bgcolor = this.state.secondaryColor;
+      leftArray[i] = arr[low + i].val;
+      await this.setState({ array: arr });
+    }
+
+    for (j = 0; j < n; j++) {
+      await this.setDelay(0);
+      arr[mid + j + 1].bgcolor = this.state.bufferColor;
+      rightArray[j] = arr[mid + j + 1].val;
+      await this.setState({ array: arr });
+    }
+
+    await this.setDelay(0);
+    i = 0;
+    j = 0;
+    k = low;
+    while (i < m && j < n) {
+      if (leftArray[i] <= rightArray[j]) {
+        arr = await this.mergeSortColorHelper(arr, m, n, l, k);
+        arr[k].val = leftArray[i];
+        i++;
+        k++;
+      } else {
+        arr = await this.mergeSortColorHelper(arr, m, n, l, k);
+        arr[k].val = rightArray[j];
+        j++;
+        k++;
+      }
+    }
+
+    while (i < m) {
+      arr = await this.mergeSortColorHelper(arr, m, n, l, k);
+      arr[k].val = leftArray[i];
+      i++;
+      k++;
+    }
+
+    while (j < n) {
+      arr = await this.mergeSortColorHelper(arr, m, n, l, k);
+      arr[k].val = rightArray[j];
+      j++;
+      k++;
+    }
+  };
+
+  mergeSortHelper = async (arr, low, high) => {
+    if (low >= high) return;
+    let mid = low + Math.floor((high - low) / 2);
+    await this.mergeSortHelper(arr, low, mid);
+    await this.mergeSortHelper(arr, mid + 1, high);
+    await this.merge(arr, low, mid, high);
+  };
+
+  mergeSort = async () => {
+    let arr = this.state.array;
+    let n = arr.length;
+    await this.mergeSortHelper(arr, 0, n - 1);
+  };
 
   endAlgo = async () => {
     await this.setState({ disableButtons: false, containerColor: "black" });
@@ -191,6 +254,11 @@ class Visualizer extends Component {
         await this.insertionSort();
         await this.endAlgo();
         break;
+      case "mergeSort":
+        await this.mergeSort();
+        await this.endAlgo();
+        break;
+
       default:
         await this.setState({ disableButtons: false });
         break;
@@ -255,6 +323,15 @@ class Visualizer extends Component {
                       Insertion Sort
                     </button>
                   </li>
+                  <li>
+                    <button
+                      className="nav_btn btn btn-small black-text text-darken-2 purple accent-1"
+                      onClick={() => this.visualizeAlgo("mergeSort")}
+                      disabled={this.state.disableButtons}
+                    >
+                      Merge Sort
+                    </button>
+                  </li>
                 </React.Fragment>
               ) : (
                 <React.Fragment>
@@ -272,6 +349,7 @@ class Visualizer extends Component {
                         <option value={"bubble"}>Bubble Sort</option>
                         <option value={"selection"}>Selection Sort</option>
                         <option value={"insertion"}>Insertion Sort</option>
+                        <option value={"mergeSort"}>Merge Sort</option>
                       </select>
                     </div>
                   </li>
