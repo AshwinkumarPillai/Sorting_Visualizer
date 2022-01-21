@@ -9,6 +9,7 @@ Website - https://ash-sorting-visualizer.netlify.app/
 1. Bubble Sort
 2. Selection Sort
 3. Insertion Sort
+4. Merge Sort
 
 ## Features
 
@@ -23,10 +24,13 @@ Website - https://ash-sorting-visualizer.netlify.app/
 - Added support for Mobile devices
 - Ability to see actual number on the individual element (only for laptop and above)
 
+### v1.1.0
+
+- Merge Sort Visualization Added
+
 ## TODO
 
 - Quick Sort
-- Merge Sort
 - Time and Space Complexity details
 - Actual time taken by algorithms
 
