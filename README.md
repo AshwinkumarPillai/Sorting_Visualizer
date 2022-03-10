@@ -28,6 +28,12 @@ Website - https://ash-sorting-visualizer.netlify.app/
 
 - Merge Sort Visualization Added
 
+### v2.0.0
+
+- Refactored Code
+- Shifted Sorting logic to individual files using funcitonal components
+- changed website logo
+
 ## TODO
 
 - Quick Sort
