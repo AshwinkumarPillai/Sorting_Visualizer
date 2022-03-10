@@ -1,7 +1,7 @@
 // import logo from "./logo.svg";
 import "./App.css";
 
-import Visualizer from "./components/Visualizer";
+import Visualizer from "./pages/Visualizer";
 
 function App() {
   return (

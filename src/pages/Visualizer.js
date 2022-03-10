@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import "../css/visualizer.css";
 import { isMobile } from "react-device-detect";
+import BubbleSort from "../components/bubbleSort";
+import SelectionSort from "../components/selectionSort";
+import InsertionSort from "../components/insertionSort";
+import MergeSort from "../components/mergeSort";
 
 class Visualizer extends Component {
   constructor(props) {
@@ -17,8 +21,9 @@ class Visualizer extends Component {
       successBufferColor: "#274e13",
       visSpeed: 100,
       containerColor: "white",
-      selectedAlgo: "none",
+      selectedAlgo: "bubble",
       showNumbers: false,
+      disableButtons: false,
     };
   }
 
@@ -72,161 +77,12 @@ class Visualizer extends Component {
     return arr;
   };
 
-  bubbleSort = async () => {
-    let arr = this.state.array;
-    let n = this.state.arraySize;
-    for (let i = 0; i < n - 1; i++) {
-      for (let j = 0; j < n - i - 1; j++) {
-        arr = await this.setColor(arr, j, this.state.secondaryColor);
-        arr = await this.setColor(arr, j + 1, this.state.secondaryColor);
-
-        await this.setDelay(0);
-
-        if (arr[j].val > arr[j + 1].val) {
-          arr = this.swap(arr, j, j + 1);
-        }
-        arr = await this.setColor(arr, j, this.state.primaryColor);
-        arr = await this.setColor(arr, j + 1, this.state.primaryColor);
-      }
-      arr[n - i - 1].bgcolor = this.state.successColor;
-      arr = await this.setColor(arr, n - i - 1, this.state.successColor);
-      this.setState({ array: arr });
-    }
-    arr = await this.setColor(arr, 0, this.state.successColor);
-  };
-
-  selectionSort = async () => {
-    let arr = this.state.array;
-    let n = arr.length;
-    let i, j, minIndex;
-    for (i = 0; i < n - 1; i++) {
-      minIndex = i;
-      arr = await this.setColor(arr, minIndex, "black");
-      for (j = i + 1; j < n; j++) {
-        arr = await this.setColor(arr, j, this.state.secondaryColor);
-        await this.setDelay(0);
-        if (arr[j].val < arr[minIndex].val) {
-          if (minIndex !== i) {
-            arr = await this.setColor(arr, minIndex, this.state.primaryColor);
-          }
-          minIndex = j;
-        } else {
-          arr = await this.setColor(arr, j, this.state.primaryColor);
-        }
-      }
-
-      await this.setDelay(0);
-
-      arr = this.swap(arr, minIndex, i);
-      arr = await this.setColor(arr, minIndex, this.state.primaryColor);
-      arr = await this.setColor(arr, i, this.state.successColor);
-    }
-    arr = await this.setColor(arr, n - 1, this.state.successColor);
-  };
-
-  insertionSort = async () => {
-    let arr = this.state.array;
-    let n = arr.length;
-    let i, j, k;
-    arr = await this.setColor(arr, 0, this.state.successColor);
-    for (i = 1; i < n; i++) {
-      arr = await this.setColor(arr, i, this.state.secondaryColor);
-
-      await this.setDelay(0);
-
-      k = arr[i].val;
-      j = i - 1;
-      while (j >= 0 && arr[j].val > k) {
-        arr = await this.setColor(arr, j, this.state.secondaryColor);
-        arr[j + 1].val = arr[j].val;
-        j -= 1;
-        await this.setDelay(0);
-        for (let t = i; t >= 0; t--) {
-          arr = await this.setColor(arr, t, this.state.successColor);
-        }
-      }
-      arr[j + 1].val = k;
-      arr = await this.setColor(arr, i, this.state.successColor);
-    }
+  updateMainArray = async (arr) => {
     await this.setState({ array: arr });
   };
 
-  mergeSortColorHelper = async (arr, m, n, l, k) => {
-    await this.setDelay(0);
-    if (m + n === l) arr[k].bgcolor = this.state.successColor;
-    else arr[k].bgcolor = this.state.successBufferColor;
-    await this.setState({ array: arr });
-    return arr;
-  };
-
-  merge = async (arr, low, mid, high) => {
-    let l = arr.length,
-      m = mid - low + 1,
-      n = high - mid;
-    let leftArray = new Array(m);
-    let rightArray = new Array(n);
-
-    let i, j, k;
-
-    for (i = 0; i < m; i++) {
-      await this.setDelay(0);
-      arr[low + i].bgcolor = this.state.secondaryColor;
-      leftArray[i] = arr[low + i].val;
-      await this.setState({ array: arr });
-    }
-
-    for (j = 0; j < n; j++) {
-      await this.setDelay(0);
-      arr[mid + j + 1].bgcolor = this.state.bufferColor;
-      rightArray[j] = arr[mid + j + 1].val;
-      await this.setState({ array: arr });
-    }
-
-    await this.setDelay(0);
-    i = 0;
-    j = 0;
-    k = low;
-    while (i < m && j < n) {
-      if (leftArray[i] <= rightArray[j]) {
-        arr = await this.mergeSortColorHelper(arr, m, n, l, k);
-        arr[k].val = leftArray[i];
-        i++;
-        k++;
-      } else {
-        arr = await this.mergeSortColorHelper(arr, m, n, l, k);
-        arr[k].val = rightArray[j];
-        j++;
-        k++;
-      }
-    }
-
-    while (i < m) {
-      arr = await this.mergeSortColorHelper(arr, m, n, l, k);
-      arr[k].val = leftArray[i];
-      i++;
-      k++;
-    }
-
-    while (j < n) {
-      arr = await this.mergeSortColorHelper(arr, m, n, l, k);
-      arr[k].val = rightArray[j];
-      j++;
-      k++;
-    }
-  };
-
-  mergeSortHelper = async (arr, low, high) => {
-    if (low >= high) return;
-    let mid = low + Math.floor((high - low) / 2);
-    await this.mergeSortHelper(arr, low, mid);
-    await this.mergeSortHelper(arr, mid + 1, high);
-    await this.merge(arr, low, mid, high);
-  };
-
-  mergeSort = async () => {
-    let arr = this.state.array;
-    let n = arr.length;
-    await this.mergeSortHelper(arr, 0, n - 1);
+  disableButtons = async () => {
+    await this.setState({ disableButtons: true });
   };
 
   endAlgo = async () => {
@@ -235,34 +91,8 @@ class Visualizer extends Component {
     await this.setState({ containerColor: "white" });
   };
 
-  visualizeAlgo = async (algo) => {
-    if (typeof algo === "object") {
-      algo = algo.target.value;
-    }
-    await this.setState({ disableButtons: true });
-
-    switch (algo) {
-      case "bubble":
-        await this.bubbleSort();
-        await this.endAlgo();
-        break;
-      case "selection":
-        await this.selectionSort();
-        await this.endAlgo();
-        break;
-      case "insertion":
-        await this.insertionSort();
-        await this.endAlgo();
-        break;
-      case "mergeSort":
-        await this.mergeSort();
-        await this.endAlgo();
-        break;
-
-      default:
-        await this.setState({ disableButtons: false });
-        break;
-    }
+  selectAlgo = async (algo) => {
+    await this.setState({ selectedAlgo: algo.target.value });
   };
 
   changeVisSpeed = (e) => {
@@ -297,55 +127,141 @@ class Visualizer extends Component {
                     </button>
                   </li>
                   <li>
-                    <button
-                      className="nav_btn btn btn-small black-text text-darken-2 purple accent-1"
-                      onClick={() => this.visualizeAlgo("bubble")}
-                      disabled={this.state.disableButtons}
-                    >
-                      Bubble Sort
-                    </button>
+                    <BubbleSort
+                      array={this.state.array}
+                      isDisabled={this.state.disableButtons}
+                      setColor={this.setColor}
+                      setDelay={this.setDelay}
+                      updateMainArray={this.updateMainArray}
+                      swap={this.swap}
+                      primaryColor={this.state.primaryColor}
+                      secondaryColor={this.state.secondaryColor}
+                      successColor={this.state.successColor}
+                      endAlgo={this.endAlgo}
+                      disableButtons={this.disableButtons}
+                    />
                   </li>
                   <li>
-                    <button
-                      className="nav_btn btn btn-small black-text text-darken-2 purple accent-1"
-                      onClick={() => this.visualizeAlgo("selection")}
-                      disabled={this.state.disableButtons}
-                    >
-                      Selection Sort
-                    </button>
+                    <SelectionSort
+                      array={this.state.array}
+                      isDisabled={this.state.disableButtons}
+                      setColor={this.setColor}
+                      setDelay={this.setDelay}
+                      swap={this.swap}
+                      primaryColor={this.state.primaryColor}
+                      secondaryColor={this.state.secondaryColor}
+                      successColor={this.state.successColor}
+                      endAlgo={this.endAlgo}
+                      disableButtons={this.disableButtons}
+                    />
                   </li>
                   <li>
-                    <button
-                      className="nav_btn btn btn-small black-text text-darken-2 purple accent-1"
-                      onClick={() => this.visualizeAlgo("insertion")}
-                      disabled={this.state.disableButtons}
-                    >
-                      Insertion Sort
-                    </button>
+                    <InsertionSort
+                      array={this.state.array}
+                      isDisabled={this.state.disableButtons}
+                      setColor={this.setColor}
+                      setDelay={this.setDelay}
+                      updateMainArray={this.updateMainArray}
+                      swap={this.swap}
+                      primaryColor={this.state.primaryColor}
+                      secondaryColor={this.state.secondaryColor}
+                      successColor={this.state.successColor}
+                      endAlgo={this.endAlgo}
+                      disableButtons={this.disableButtons}
+                    />
                   </li>
                   <li>
-                    <button
-                      className="nav_btn btn btn-small black-text text-darken-2 purple accent-1"
-                      onClick={() => this.visualizeAlgo("mergeSort")}
-                      disabled={this.state.disableButtons}
-                    >
-                      Merge Sort
-                    </button>
+                    <MergeSort
+                      array={this.state.array}
+                      isDisabled={this.state.disableButtons}
+                      setColor={this.setColor}
+                      setDelay={this.setDelay}
+                      updateMainArray={this.updateMainArray}
+                      swap={this.swap}
+                      primaryColor={this.state.primaryColor}
+                      secondaryColor={this.state.secondaryColor}
+                      successColor={this.state.successColor}
+                      successBufferColor={this.state.successBufferColor}
+                      bufferColor={this.state.bufferColor}
+                      endAlgo={this.endAlgo}
+                      disableButtons={this.disableButtons}
+                    />
                   </li>
                 </React.Fragment>
               ) : (
                 <React.Fragment>
-                  <li className="select_container">
+                  <li>
+                    {this.state.selectedAlgo === "bubble" ? (
+                      <BubbleSort
+                        array={this.state.array}
+                        isDisabled={this.state.disableButtons}
+                        setColor={this.setColor}
+                        setDelay={this.setDelay}
+                        updateMainArray={this.updateMainArray}
+                        swap={this.swap}
+                        primaryColor={this.state.primaryColor}
+                        secondaryColor={this.state.secondaryColor}
+                        successColor={this.state.successColor}
+                        endAlgo={this.endAlgo}
+                        disableButtons={this.disableButtons}
+                      />
+                    ) : null}
+                    {this.state.selectedAlgo === "selection" ? (
+                      <SelectionSort
+                        array={this.state.array}
+                        isDisabled={this.state.disableButtons}
+                        setColor={this.setColor}
+                        setDelay={this.setDelay}
+                        swap={this.swap}
+                        primaryColor={this.state.primaryColor}
+                        secondaryColor={this.state.secondaryColor}
+                        successColor={this.state.successColor}
+                        endAlgo={this.endAlgo}
+                        disableButtons={this.disableButtons}
+                      />
+                    ) : null}
+                    {this.state.selectedAlgo === "insertion" ? (
+                      <InsertionSort
+                        array={this.state.array}
+                        isDisabled={this.state.disableButtons}
+                        setColor={this.setColor}
+                        setDelay={this.setDelay}
+                        updateMainArray={this.updateMainArray}
+                        swap={this.swap}
+                        primaryColor={this.state.primaryColor}
+                        secondaryColor={this.state.secondaryColor}
+                        successColor={this.state.successColor}
+                        endAlgo={this.endAlgo}
+                        disableButtons={this.disableButtons}
+                      />
+                    ) : null}
+
+                    {this.state.selectedAlgo === "mergeSort" ? (
+                      <MergeSort
+                        array={this.state.array}
+                        isDisabled={this.state.disableButtons}
+                        setColor={this.setColor}
+                        setDelay={this.setDelay}
+                        updateMainArray={this.updateMainArray}
+                        swap={this.swap}
+                        primaryColor={this.state.primaryColor}
+                        secondaryColor={this.state.secondaryColor}
+                        successColor={this.state.successColor}
+                        successBufferColor={this.state.successBufferColor}
+                        bufferColor={this.state.bufferColor}
+                        endAlgo={this.endAlgo}
+                        disableButtons={this.disableButtons}
+                      />
+                    ) : null}
+                  </li>
+                  <li>
                     <div className="input-field col s12">
                       <select
-                        onChange={this.visualizeAlgo}
-                        value={this.state.selectedAlgo}
-                        className="browser-default"
+                        onChange={this.selectAlgo}
+                        style={{ width: "20px", height: "30px", marginTop: "5px" }}
+                        className="browser-default purple accent-1"
                         disabled={this.state.disableButtons}
                       >
-                        <option value="none" disabled>
-                          Choose an Algo
-                        </option>
                         <option value={"bubble"}>Bubble Sort</option>
                         <option value={"selection"}>Selection Sort</option>
                         <option value={"insertion"}>Insertion Sort</option>
